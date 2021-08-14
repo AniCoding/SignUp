@@ -97,7 +97,11 @@
               "src/styles.css"
             ],
             "scripts": []
-         
+            }    },
+              
+            "deploy": {    "builder": "angular-cli-ghpages:deploy",  
+                "options": {    "baseHref": "https://github.com/AniCoding/SignUp",    
+                  "name": "signinsignupcanvas",    "email": " ani.webdevelopment@gmail.com" 
           }
         }
       }

@@ -4,10 +4,15 @@
   <div class="ui stacked secondary segment">
     <div class="field">
       <div>
+        
         <label for="firstName">
           First Name
           <input type="text" name="firstName" formControlName="firstName" />
         </label>
+        <div class="help is-danger" *ngIf="AuthForm.errors?.minlength">
+          Value is required.
+        </div>
+      
         {{ AuthForm.get("firstName")?.errors | json }}
       </div>
     </div>
@@ -28,6 +33,10 @@
           Email
           <input type="text" name="email" formControlName="email" />
         </label>
+        <div *ngIf AuthForm.controls.email.touched >
+          Please enter your email
+        </div>
+        <p>User exists</p> 
         {{ AuthForm.get("email")?.errors | json }}
       </div>
     </div>
@@ -52,9 +61,14 @@
             formControlName="confirmPassword"
           />
         </label>
+         <div *ngIf >
+
+         </div>
+        <p>Passwords don't match</p> 
         {{ AuthForm.get("confirmPassword")?.errors | json }}
       </div>
     </div>
+    {{AuthForm.errors | json}}
 
     <div class="field">
       <div class="ui checkbox">

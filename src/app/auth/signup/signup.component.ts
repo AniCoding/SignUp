@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { IUser } from 'src/app/interfaces/user.interface';
 import { LocalStorageService } from 'src/app/services/storage.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatchPassword } from 'src/app/validators/match-password';
+import { userExists } from 'src/app/validators/user-exists';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-signup',
@@ -11,12 +14,9 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
-  usersKey: string = 'users';
   users: IUser[] = []; 
-  // =['user1']
 
   AuthForm = new FormGroup ({
-
     firstName: new FormControl ('', [
       Validators.required,
       Validators.pattern(/^[a-z0-9]+$/)]
@@ -44,7 +44,7 @@ export class SignupComponent implements OnInit {
       Validators.minLength(3),
       Validators.maxLength(20)
     ]),
-  })
+  }, { validators: [this.matchPassword.validate, userExists(this.usersService.getUsers())]})
 
   get getPassword() {
     return this.AuthForm.get('passwords')?.get('password');
@@ -65,28 +65,28 @@ export class SignupComponent implements OnInit {
     };
 
     this.users.push(newUser);
-    const usersStr = JSON.stringify(this.users);
-    this.storage.set(this.usersKey, usersStr);
+    this.usersService.setUsers(this.users);
+  }
+
+  showErrors() {
+    const { dirty, touched, errors } = this.AuthForm.value;
+    return dirty && touched && errors;
   }
 
   newId(): string {
     return String(Date.now());
   }
 
-  constructor(private router: Router, private fb: FormBuilder, private storage: LocalStorageService) { 
+  constructor(
+    private router: Router,
+    private matchPassword: MatchPassword,
+    private usersService: UsersService,
+    ) { 
     
   }
 
   ngOnInit(): void {
     
-  }
-
-
-  getUsers(): void {
-    const users = this.storage.get(this.usersKey);
-    if (users) {
-      this.users = JSON.parse(users);
-    }
   }
 
   navigateToSignIn(): void {
